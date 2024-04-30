@@ -5,6 +5,10 @@
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "strict": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    
+  },
+  "include": ["src/**/*.ts", "src/**/*.json", ".env"]
 }
