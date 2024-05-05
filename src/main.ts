@@ -1,32 +1,37 @@
 import fs from "fs";
-import express, { Application, json } from "express";
+import express, { Application, json, urlencoded } from "express";
 import cors from "cors";
 import { appRouter } from "./routes";
 import path from "path";
 import dotenv from "dotenv";
-import { createServer } from "http";
+import morgan from "morgan";
+import { errorHandle } from "./middleware/error.middleware";
+import { logger } from "./config/logger.config";
+import { morganFormat } from "./util/morgan.util";
+dotenv.config();
+
+const app: Application = express();
 
 async function server() {
-  const app: Application = express();
-  const port = 3002;
+  const port = process.env.PORT || 3002;
   const router = await appRouter();
   const imagesDir = path.join(__dirname, "images");
-
-  dotenv.config();
-  app.use("/images", express.static(imagesDir));
-  app.use(cors());
+  app.use(
+    morgan(morganFormat, {
+      stream: { write: (message) => logger.http(message.trim()) },
+    })
+  );
   app.use(json());
   app.use(router);
-
+  app.use(errorHandle);
   app.listen(port, () => {
     if (!fs.existsSync(imagesDir)) {
       fs.mkdirSync(imagesDir, { recursive: true });
     }
-    console.log(`🔥 Server is Opened PORT : ${port}`);
+    logger.info(`🔥 Server is Opened PORT - ${port}`);
   });
 }
 
 server();
-const setup = createServer(express());
 
-module.exports = setup;
+module.exports = app;
