@@ -39,8 +39,9 @@ export class AppServie {
       throw new Exceptions(400, "Please check the file format!");
     }
 
-    const { API_URL, PORT } = process.env;
-    const imageUrl = `${API_URL}:${PORT}/image/${imageFile?.filename}`;
+    const { API_URL, LOCALHOST, NODE_ENV, PORT } = process.env;
+    const url = NODE_ENV === "production" ? API_URL : LOCALHOST;
+    const imageUrl = `${url}:${PORT}/image/${imageFile?.filename}`;
     const result = { url: imageUrl };
 
     return result;
