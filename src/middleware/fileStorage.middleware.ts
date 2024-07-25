@@ -9,7 +9,12 @@ export function fileStorageConfig() {
       cb(null, imagesDir);
     },
     filename: function (req, file, cb) {
-      cb(null, `${Date.now()}-${file.originalname}`);
+      // file.originalname = Buffer.from(file.originalname, "latin1").toString(
+      //   "utf-8"
+      // );
+      const ext = path.extname(file.originalname);
+      const randomString = Math.floor(Math.random() * Date.now()).toString(16);
+      cb(null, `${Date.now()}-${randomString}${ext}`);
     },
   });
   if (!fs.existsSync(imagesDir)) {
